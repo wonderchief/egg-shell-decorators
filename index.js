@@ -178,9 +178,9 @@ const EggShell = (app, options = {}) => {
           if (!ignoreJwt && !ignoreJwtAll && jwt && options.jwtValidation) {
             await options.jwtValidation()(ctx, next);
           }
-          for (const before of befores) {
-            await before()(ctx, next);
-          }
+          // for (const before of befores) {
+          //   await before()(ctx, next);
+          // }
           ctx.body = ctx.request ? ctx.request.body : null;
           const result = await instance[pName](ctx);
           if (options.quickStart && !render && !renderController) {
@@ -199,8 +199,9 @@ const EggShell = (app, options = {}) => {
           throw error;
         }
       };
-
-      router[reqMethod](prefix + path, routerCb);
+      const mids = [prefix + path, ...befores, routerCb,];
+      router[reqMethod].apply(app, mids);
+      // router[reqMethod](prefix + path, routerCb);
     }
   }
 
